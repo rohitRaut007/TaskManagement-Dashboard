@@ -1,6 +1,6 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleComplete, deleteTask } from '../features/taskSlice';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleComplete, deleteTask } from "../features/taskSlice";
 import {
   Box,
   List,
@@ -17,18 +17,16 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
-  Icon,
-} from '@mui/material';
-
-// import { CheckCircle, RadioButtonUnchecked, Delete, Event } from '@mui/icons-material';
-import { format, isBefore } from 'date-fns';
-import { CheckCircle, RadioButtonUnchecked, Delete, Event } from '@mui/icons-material';
-import TaskFilters from '../components/taskFilters'
-
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { format, isBefore } from "date-fns";
+import { CheckCircle, RadioButtonUnchecked, Delete, Event } from "@mui/icons-material";
+import TaskFilters from "../components/taskFilters";
 
 const TaskList = () => {
   const { tasks, filter } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Hook to navigate between routes
 
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [taskToDelete, setTaskToDelete] = React.useState(null);
@@ -45,35 +43,39 @@ const TaskList = () => {
   };
 
   const filteredTasks = tasks.filter((task) => {
-    if (filter === 'completed') return task.completed;
-    if (filter === 'pending') return !task.completed;
-    if (filter === 'overdue') return isBefore(new Date(task.dueDate), new Date()) && !task.completed;
+    if (filter === "completed") return task.completed;
+    if (filter === "pending") return !task.completed;
+    if (filter === "overdue")
+      return isBefore(new Date(task.dueDate), new Date()) && !task.completed;
     return true;
   });
 
   return (
     <Box>
       <h1>Task List</h1>
-      <TaskFilters/>
+      <TaskFilters />
       <List>
-        {filteredTasks.map((task) => (
+        {filteredTasks.map((task) => ( 
           <ListItem
             key={task.id}
             sx={{
-              bgcolor: '#5c6dc9',
+              bgcolor: "#5c6dc9",
               borderRadius: 2,
               mb: 2,
               padding: 2,
               boxShadow: 1,
-              '&:hover': { boxShadow: 3 },
+              "&:hover": { boxShadow: 3 },
+              cursor: "pointer", // Make items clickable
             }}
-          >
+            onClick={() => navigate(`/tasks/${task.id}`)} // Navigate to TaskDetail
+                   
+         >
             {/* Task Details */}
             <ListItemText
               primary={
                 <Typography
                   variant="h6"
-                  sx={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+                  sx={{ textDecoration: task.completed ? "line-through" : "none" }}
                 >
                   {task.title}
                 </Typography>
@@ -85,37 +87,50 @@ const TaskList = () => {
                   </Typography>
                   <Typography
                     variant="body2"
-                    sx={{ display: 'flex', alignItems: 'center' }}
+                    sx={{ display: "flex", alignItems: "center" }}
                   >
                     <Event fontSize="small" sx={{ mr: 1 }} />
-                    Due: {format(new Date(task.dueDate), 'MMM dd, yyyy')}
+                    Due: {format(new Date(task.dueDate), "MMM dd, yyyy")}
                   </Typography>
-                  {!task.completed && isBefore(new Date(task.dueDate), new Date()) && (
-                    <Chip
-                      label="Overdue"
-                      color="error"
-                      size="small"
-                      sx={{ mt: 1 }}
-                    />
-                  )}
+                  <Button style={{color:"InfoText"}} >View Detail</Button>
+                  {!task.completed &&
+                    isBefore(new Date(task.dueDate), new Date()) && (
+                      <Chip
+                        label="Overdue"
+                        color="error"
+                        size="small"
+                        sx={{ mt: 1 }}
+                      />
+                    )}
                 </>
               }
             />
 
             {/* Task Actions */}
             <ListItemSecondaryAction>
-              <Tooltip title={task.completed ? 'Mark as Pending' : 'Mark as Completed'}>
+              <Tooltip
+                title={task.completed ? "Mark as Pending" : "Mark as Completed"}
+              >
                 <IconButton
                   edge="end"
-                  color={task.completed ? 'success' : 'default'}
-                  onClick={() => dispatch(toggleComplete(task.id))}
+                  color={task.completed ? "success" : "default"}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent click from triggering navigation
+                    dispatch(toggleComplete(task.id));
+                  }}
                 >
                   {task.completed ? <CheckCircle /> : <RadioButtonUnchecked />}
                 </IconButton>
-                <span></span>
               </Tooltip>
               <Tooltip title="Delete Task">
-                <IconButton edge="end" color="error" onClick={() => handleDeleteClick(task)}>
+                <IconButton
+                  edge="end"
+                  color="error"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent click from triggering navigation
+                    handleDeleteClick(task);
+                  }}
+                >
                   <Delete />
                 </IconButton>
               </Tooltip>
@@ -133,7 +148,7 @@ const TaskList = () => {
         <DialogTitle id="delete-task-dialog-title">Delete Task</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete the task{' '}
+            Are you sure you want to delete the task{" "}
             <strong>{taskToDelete?.title}</strong>? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
