@@ -10,7 +10,6 @@ const Dashboard = () => {
         <Sidebar/>
         <h1>Task Management</h1>
         <TaskForm/>
-        <TaskFilters/>
         <TaskList/>
     </div>
   );

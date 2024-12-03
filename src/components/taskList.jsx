@@ -23,6 +23,7 @@ import {
 // import { CheckCircle, RadioButtonUnchecked, Delete, Event } from '@mui/icons-material';
 import { format, isBefore } from 'date-fns';
 import { CheckCircle, RadioButtonUnchecked, Delete, Event } from '@mui/icons-material';
+import TaskFilters from '../components/taskFilters'
 
 
 const TaskList = () => {
@@ -53,6 +54,7 @@ const TaskList = () => {
   return (
     <Box>
       <h1>Task List</h1>
+      <TaskFilters/>
       <List>
         {filteredTasks.map((task) => (
           <ListItem
@@ -110,6 +112,7 @@ const TaskList = () => {
                 >
                   {task.completed ? <CheckCircle /> : <RadioButtonUnchecked />}
                 </IconButton>
+                <span></span>
               </Tooltip>
               <Tooltip title="Delete Task">
                 <IconButton edge="end" color="error" onClick={() => handleDeleteClick(task)}>
