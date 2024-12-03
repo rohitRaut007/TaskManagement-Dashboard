@@ -12,7 +12,20 @@ const Sidebar = () => {
 
   return (
     <>
-        <IconButton onClick={toggleDrawer(true)} style={{ color:'blue' ,position: 'fixed', top: 10, left: 10 }}>
+    <input
+            type="text"
+            placeholder="Search tasks..."
+            style={{
+                width: '250px',
+              padding: '12px',
+              margin: '10px',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              position: 'fixed', top: 10, right: 10
+            }}
+          />
+
+      <IconButton onClick={toggleDrawer(true)} style={{ color:'blue' ,position: 'fixed', top: 10, left: 10 }}>
         <FaHamburger />
         <div className="inline">Dashboard</div>
       </IconButton>
